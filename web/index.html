@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -31,8 +18,58 @@
 
   <title>level_up_life</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    #update-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #323232;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      display: none;
+      font-family: sans-serif;
+      z-index: 1000;
+    }
+    #update-banner button {
+      margin-left: 12px;
+      padding: 6px 12px;
+      background: #ff9800;
+      border: none;
+      border-radius: 4px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+
+  <!-- 🔥 Snackbar-style update banner -->
+  <div id="update-banner">
+    New version available!
+    <button onclick="window.location.reload()">Refresh</button>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('flutter_service_worker.js').then((reg) => {
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // Show update banner instead of auto-refresh
+                document.getElementById('update-banner').style.display = 'block';
+              }
+            };
+          };
+        });
+      });
+    }
+  </script>
 </body>
 </html>
